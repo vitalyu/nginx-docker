@@ -5,6 +5,7 @@ RUN mkdir /nginx-build
 ADD ./centos-build-nginx.sh /nginx-build/build.sh
 RUN chmod +x /nginx-build/build.sh
 RUN /nginx-build/build.sh
+RUN rm -rf /nginx-build/
 
 # forward request and error logs to docker log collector
 RUN    ln -sf /dev/stdout /var/log/nginx/access.log \

@@ -167,7 +167,7 @@ WantedBy=multi-user.target" > /lib/systemd/system/nginx.service
 
 echo -e "\Rollback installed packages"
 
-yum history -y undo 1 #${YUM_HISTORY_ID}
+yum history -y undo ${YUM_HISTORY_ID} || true
 
 ##
 

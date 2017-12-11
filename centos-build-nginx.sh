@@ -133,6 +133,7 @@ cd "${NGINX_VERSION}"
 --error-log-path=/var/log/nginx/error.log \
 --with-pcre="${BUILD_DIR}/pcre-8.41" \
 --with-zlib="${BUILD_DIR}/zlib-1.2.11" \
+--with-http_v2_module \
 --with-http_ssl_module \
 --with-http_geoip_module \
 --with-stream \

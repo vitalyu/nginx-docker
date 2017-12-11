@@ -136,6 +136,7 @@ cd "${NGINX_VERSION}"
 --with-http_v2_module \
 --with-http_ssl_module \
 --with-http_geoip_module \
+--with-http_stub_status_module \
 --with-stream \
 --add-module="${BUILD_DIR}/nginx-module-vts" \
 --add-module="${BUILD_DIR}/ngx_dynamic_upstream" \

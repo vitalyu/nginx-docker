@@ -30,10 +30,11 @@ OPENSSL_VERSION="openssl-1.0.2m"
 
 echo -e "\n++ Installing packages\n"
 
-YUM_HISTORY_ID=$( yum history | sed -n 4p | awk '{print $1}' )
-
 yum install -y epel-release wget git 
 yum install -y openssl-devel geoip-devel
+
+YUM_HISTORY_ID=$( yum history | sed -n 4p | awk '{print $1}' )
+
 yum install -y gcc gcc-c++ autoconf make automake libtool
 
 ##

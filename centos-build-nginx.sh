@@ -151,16 +151,22 @@ echo -e "\nInstalling to systemd\n"
 # https://www.nginx.com/resources/wiki/start/topics/examples/systemd/
 
 echo "[Unit]
-Description=The NGINX HTTP and reverse proxy server
-After=syslog.target network.target remote-fs.target nss-lookup.target
+Description=The nginx HTTP and reverse proxy server
+After=network.target remote-fs.target nss-lookup.target
 
 [Service]
 Type=forking
 PIDFile=/var/run/nginx.pid
+# Nginx will fail to start if /var/run/nginx.pid already exists but has the wrong
+# SELinux context. This might happen when running `nginx -t` from the cmdline.
+# https://bugzilla.redhat.com/show_bug.cgi?id=1268621
+ExecStartPre=/usr/bin/rm -f /var/run/nginx.pid
 ExecStartPre=/usr/sbin/nginx -t
 ExecStart=/usr/sbin/nginx
 ExecReload=/bin/kill -s HUP $MAINPID
-ExecStop=/bin/kill -s QUIT $MAINPID
+KillSignal=SIGQUIT
+TimeoutStopSec=5
+KillMode=process
 PrivateTmp=true
 
 [Install]

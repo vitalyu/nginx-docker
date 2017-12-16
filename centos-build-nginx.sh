@@ -174,6 +174,23 @@ WantedBy=multi-user.target" > /lib/systemd/system/nginx.service
 
 ##
 
+echo -e "\nCreating logrotate job\n"
+
+echo "/var/log/nginx/*log {
+    create 0644 nginx nginx
+    daily
+    rotate 10
+    missingok
+    notifempty
+    compress
+    sharedscripts
+    postrotate
+        /bin/kill -USR1 `cat /var/run/nginx.pid 2>/dev/null` 2>/dev/null || true
+    endscript
+}" > /etc/logrotate.d/nginx || true
+
+##
+
 echo -e "\Rollback installed packages"
 
 # yum history -y undo ${YUM_HISTORY_ID} || true

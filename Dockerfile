@@ -1,5 +1,5 @@
 FROM centos:7.4.1708
-MAINTAINER Vitaly Uvarov <v.uvarov@dodopizza.com>
+LABEL maintainer="Vitaly Uvarov <v.uvarov@dodopizza.com>"
 
 RUN mkdir /nginx-build
 ADD ./centos-build-nginx.sh /nginx-build/build.sh

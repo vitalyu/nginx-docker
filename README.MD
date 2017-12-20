@@ -13,6 +13,8 @@ OPENSSL_VERSION="openssl-1.0.2m"
 ```
 
 ## Modules
+* [http_v2_module]( https://nginx.ru/ru/docs/http/ngx_http_v2_module.html )
+* [http_stub_status_module]( https://nginx.ru/ru/docs/http/ngx_http_stub_status_module.html )
 * [http_ssl_module]( https://nginx.ru/en/docs/http/ngx_http_ssl_module.html )
 * [http_geoip_module]( https://nginx.ru/en/docs/http/ngx_http_geoip_module.html )
 * [stream module]( https://nginx.ru/en/docs/stream/ngx_stream_core_module.html )

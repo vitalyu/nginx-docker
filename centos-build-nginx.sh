@@ -4,8 +4,8 @@
 # [Vitaly Uvarov] CentOS 7 NGINX build script
 #
 #          build NGINX from sources with
-            + http_v2_module
-            + http_stub_status_module
+#           + http_v2_module
+#           + http_stub_status_module
 #           + http_ssl_module
 #           + http_geoip_module
 #           + stream module

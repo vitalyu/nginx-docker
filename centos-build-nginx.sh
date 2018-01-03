@@ -165,7 +165,7 @@ PIDFile=/var/run/nginx.pid
 ExecStartPre=/usr/bin/rm -f /var/run/nginx.pid
 ExecStartPre=/usr/sbin/nginx -t
 ExecStart=/usr/sbin/nginx
-ExecReload=/bin/kill -s HUP $MAINPID
+ExecReload=/bin/kill -s HUP \$MAINPID
 KillSignal=SIGQUIT
 TimeoutStopSec=5
 KillMode=process
@@ -178,16 +178,17 @@ WantedBy=multi-user.target" > /lib/systemd/system/nginx.service
 
 echo -e "\nCreating logrotate job\n"
 
-echo "/var/log/nginx/*log {
+echo "/var/log/nginx/*.log {
     create 0644 nginx nginx
     daily
     rotate 10
     missingok
     notifempty
     compress
+    delaycompress
     sharedscripts
     postrotate
-        /bin/kill -USR1 `cat /var/run/nginx.pid 2>/dev/null` 2>/dev/null || true
+        /bin/kill -USR1 \`cat /var/run/nginx.pid 2>/dev/null\` 2>/dev/null || true
     endscript
 }" > /etc/logrotate.d/nginx || true
 

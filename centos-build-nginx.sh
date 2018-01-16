@@ -12,6 +12,7 @@
 #           + nginx-module-vts
 #           + ngx_dynamic_upstream
 #           + nginx-rtmp-module
+#           + ngx_http_api_module
 #
 # Note! This script tested on local machine (CentOS 7.4).
 #       Run only from ROOT
@@ -139,6 +140,7 @@ cd "${NGINX_VERSION}"
 --with-http_ssl_module \
 --with-http_geoip_module \
 --with-http_stub_status_module \
+--with-ngx_http_api_module \
 --with-stream \
 --add-module="${BUILD_DIR}/nginx-module-vts" \
 --add-module="${BUILD_DIR}/ngx_dynamic_upstream" \

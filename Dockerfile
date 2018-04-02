@@ -7,9 +7,7 @@ RUN /bin/bash /nginx-build/build.sh && rm -rf /nginx-build/
 
 RUN mkdir /wallarm-install
 ADD ./centos-wallarm-module.sh /wallarm-install/centos-wallarm-module.sh
-RUN yum install -y deltarpm && \
-    /bin/bash /wallarm-install/centos-wallarm-module.sh && \
-    rm -rf /wallarm-install/
+RUN yum install -y deltarpm && /bin/bash /wallarm-install/centos-wallarm-module.sh && rm -rf /wallarm-install/
 
 # forward request and error logs to docker log collector
 RUN    ln -sf /dev/stdout /var/log/nginx/access.log \

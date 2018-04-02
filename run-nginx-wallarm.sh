@@ -8,7 +8,7 @@
 # ------------------------------------------------------------------
 
 SCRIPT_DIR=`cd $(dirname $0)/;pwd`
-CONTAINER_NAME=nginx
+CONTAINER_NAME=nginx-wallarm
 
 case "$1" in
 	#-------------------

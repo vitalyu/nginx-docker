@@ -19,9 +19,12 @@ EOL
 
 ## yum --disablerepo "*" --enablerepo "wallarm-node-dodopizza" list available
 
-yum install -y wallarm-node nginx-module-wallarm-dodopizza.x86_64
+yum install -y wallarm-node nginx-module-wallarm-dodopizza.x86_64 libtws-0.0.3-1.x86_64
 
 ## repoquery -l nginx-module-wallarm-dodopizza.x86_64
 
 
 load_module /usr/lib64/nginx/modules/ngx_http_wallarm_module.so;
+
+
+kill -HUP `cat /var/run/nginx.pid` && date && sleep 1 && tail -f /var/log/nginx/error.log ; date

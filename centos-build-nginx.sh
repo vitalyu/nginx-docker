@@ -23,7 +23,7 @@ BUILD_DIR=$(cd $(dirname $0) && pwd) # without ending /
 
 ##
 
-NGINX_VERSION="nginx-1.13.8"
+NGINX_VERSION="nginx-1.13.7"
 PCRE_VERSION="pcre-8.41"
 ZLIB_VERSION="zlib-1.2.11"
 OPENSSL_VERSION="openssl-1.0.2m"

@@ -24,11 +24,11 @@ EOL
 
 ##
 
-yum --disablerepo "*" --enablerepo "wallarm-node-dodopizza" list available
+#yum --disablerepo "*" --enablerepo "wallarm-node-dodopizza" list available
 
 yum install -y wallarm-node nginx-module-wallarm-dodopizza.x86_64
 
-repoquery -l nginx-module-wallarm-dodopizza.x86_64
+#repoquery -l nginx-module-wallarm-dodopizza.x86_64
 
 
 ##

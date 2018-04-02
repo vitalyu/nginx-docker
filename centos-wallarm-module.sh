@@ -27,9 +27,9 @@ EOL
 #yum --disablerepo "*" --enablerepo "wallarm-node-dodopizza" list available
 
 yum install -y wallarm-node nginx-module-wallarm-dodopizza.x86_64
+yum -y --setopt tsflags= reinstall nginx-module-wallarm-dodopizza.x86_64 # By default, the CentOS containers are built using yum's nodocs option, which helps reduce the size of the image
 
 #repoquery -l nginx-module-wallarm-dodopizza.x86_64
-
 
 ##
 

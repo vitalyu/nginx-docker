@@ -27,7 +27,7 @@ case "$1" in
 		        -p 82:82   \
 		        -p 443:443 \
 		        -v "${SCRIPT_DIR}/nginx/:/etc/nginx/" \
-		        vitalyu/nginx-docker:1.13.7
+		        vitalyu/nginx-docker:1.13.7-wallarm
         ;;
 	#-------------------
         restart)

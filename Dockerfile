@@ -1,4 +1,4 @@
-FROM centos:7.4.1708
+FROM centos/systemd:latest
 LABEL maintainer="Vitaly Uvarov <v.uvarov@dodopizza.com>"
 
 RUN mkdir /nginx-build

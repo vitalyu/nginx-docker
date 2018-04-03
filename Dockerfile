@@ -1,7 +1,9 @@
-FROM vitalyu/nginx-docker:1.13.7
+FROM vitalyu/nginx-docker:1.13.7-systemd
 LABEL maintainer="Vitaly Uvarov <v.uvarov@dodopizza.com>"
 
-RUN yum install -y cronie
+RUN yum install -y cronie && \
+    systemctl enable  crond.service && \
+    systemctl restart crond.service
 
 RUN mkdir /wallarm-install
 ADD ./centos-wallarm-module.sh /wallarm-install/centos-wallarm-module.sh

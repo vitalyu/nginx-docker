@@ -32,6 +32,11 @@ yum -y --setopt tsflags= reinstall nginx-module-wallarm-dodopizza.x86_64 # By de
 
 ##
 
+chmod 777 -R /etc/wallarm/
+install -d /var/cache/nginx/wallarm/ -o wallarm -g wallarm
+
+##
+
 yum clean all
 
 ##

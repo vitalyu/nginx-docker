@@ -12,4 +12,4 @@ RUN mkdir /wallarm-install
 ADD ./centos-wallarm-module.sh /wallarm-install/centos-wallarm-module.sh
 RUN /bin/bash /wallarm-install/centos-wallarm-module.sh && rm -rf /wallarm-install/
 
-CMD crond && nginx -g daemon off;
+CMD crond && nginx -g 'daemon off;'

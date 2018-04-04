@@ -6,9 +6,10 @@ RUN yum install -y crontabs && yum clean all
 RUN    ( sed -i -e '/pam_loginuid.so/s/^/#/' /etc/pam.d/crond ) \
     && ( chmod 0644 /etc/crontab ) \
     && ( echo '@reboot root touch /cron_is_ok' >> /etc/crontab )
-CMD crond && nginx -g daemon off;
 # -
 
 RUN mkdir /wallarm-install
 ADD ./centos-wallarm-module.sh /wallarm-install/centos-wallarm-module.sh
 RUN /bin/bash /wallarm-install/centos-wallarm-module.sh && rm -rf /wallarm-install/
+
+CMD crond && nginx -g daemon off;

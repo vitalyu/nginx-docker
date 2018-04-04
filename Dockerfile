@@ -2,11 +2,11 @@ FROM vitalyu/nginx-docker:1.13.7
 LABEL maintainer="Vitaly Uvarov <v.uvarov@dodopizza.com>"
 
 # Step based on yosugi/cron-centos
-RUN yum install -y crontabs
+RUN yum install -y crontabs && yum clean all
 RUN    ( sed -i -e '/pam_loginuid.so/s/^/#/' /etc/pam.d/crond ) \
     && ( chmod 0644 /etc/crontab ) \
     && ( echo '@reboot root touch /cron_is_ok' >> /etc/crontab )
-CMD crond
+CMD crond && nginx -g daemon off;
 # -
 
 RUN mkdir /wallarm-install

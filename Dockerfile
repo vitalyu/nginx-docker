@@ -5,7 +5,7 @@ LABEL maintainer="Vitaly Uvarov <v.uvarov@dodopizza.com>"
 RUN yum install -y crontabs
 RUN    ( sed -i -e '/pam_loginuid.so/s/^/#/' /etc/pam.d/crond ) \
     && ( chmod 0644 /etc/crontab ) \
-    && ( echo '@reboot root /cron_is_ok' >> /etc/crontab )
+    && ( echo '@reboot root touch /cron_is_ok' >> /etc/crontab )
 CMD crond
 # -
 

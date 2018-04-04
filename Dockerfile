@@ -1,9 +1,13 @@
-FROM vitalyu/nginx-docker:1.13.7-systemd
+FROM vitalyu/nginx-docker:1.13.7
 LABEL maintainer="Vitaly Uvarov <v.uvarov@dodopizza.com>"
 
-RUN    yum install -y cronie \
-    && yum clean all \
-    && sed -i '/session required pam_loginuid.so/d' /etc/pamd.d/crond
+# Step based on yosugi/cron-centos
+RUN yum install -y crontabs
+RUN    ( sed -i -e '/pam_loginuid.so/s/^/#/' /etc/pam.d/crond ) \
+    && ( chmod 0644 /etc/crontab ) \
+    && ( echo '@reboot root /cron_is_ok' >> /etc/crontab )
+CMD crond
+# -
 
 RUN mkdir /wallarm-install
 ADD ./centos-wallarm-module.sh /wallarm-install/centos-wallarm-module.sh

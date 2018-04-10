@@ -112,12 +112,12 @@ tar -zxf "${NGINX_VERSION}.tar.gz"
 echo -e "\n++ Cloning ModSecurity Connector \n"
 git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git
 
-echo -e "\n++ Building ModSecurity Connector as dynamic module \n"
-cd "${NGINX_VERSION}"
-./configure --with-compat --add-dynamic-module="${BUILD_DIR}/ModSecurity-nginx"
-make modules
-install -d /nginx_http_modsecurity_module
-cp objs/ngx_http_modsecurity_module.so /nginx_http_modsecurity_module/
+# echo -e "\n++ Building ModSecurity Connector as dynamic module \n"
+# cd "${NGINX_VERSION}"
+# ./configure --with-compat --add-dynamic-module="${BUILD_DIR}/ModSecurity-nginx"
+# make modules
+# install -d /nginx_http_modsecurity_module
+# cp objs/ngx_http_modsecurity_module.so /nginx_http_modsecurity_module/
 
 ##
 
@@ -177,7 +177,8 @@ cd "${NGINX_VERSION}"
 --with-stream \
 --add-module="${BUILD_DIR}/nginx-module-vts" \
 --add-module="${BUILD_DIR}/ngx_dynamic_upstream" \
---add-module="${BUILD_DIR}/nginx-rtmp-module"
+--add-module="${BUILD_DIR}/nginx-rtmp-module" \
+--add-module="${BUILD_DIR}/ModSecurity-nginx"
 
 make
 make install

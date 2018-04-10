@@ -156,7 +156,7 @@ cd "${NGINX_VERSION}"
 --with-stream \
 --add-module="${BUILD_DIR}/nginx-module-vts" \
 --add-module="${BUILD_DIR}/ngx_dynamic_upstream" \
---add-module="${BUILD_DIR}/nginx-rtmp-module"
+--add-module="${BUILD_DIR}/nginx-rtmp-module" \
 --add-module="${BUILD_DIR}/modsecurity/nginx/modsecurity"
 
 make

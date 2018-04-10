@@ -84,7 +84,7 @@ openssl version
 
 ##
 
-echo -e "\n++ ModSecurity\n"
+echo -e "\n++ Building ModSecurity \n"
 
 cd "${BUILD_DIR}"
 git clone -b 'nginx_refactoring' https://github.com/SpiderLabs/ModSecurity.git modsecurity # http://www.modsecurity.org/download.html
@@ -92,6 +92,7 @@ cd "modsecurity"
 
 modsecurity_required_packages='libcurl-devel libxml2-devel httpd-devel'
 yum install -y $modsecurity_required_packages
+./autogen.sh
 ./configure --enable-standalone-module
 make
 yum remove -y $modsecurity_required_packages

@@ -82,6 +82,19 @@ ln -s /usr/local/ssl/bin/openssl /usr/bin/openssl
 
 openssl version
 
+##
+
+echo -e "\n++ ModSecurity\n"
+
+cd "${BUILD_DIR}"
+git clone -b 'nginx_refactoring' https://github.com/SpiderLabs/ModSecurity.git modsecurity # http://www.modsecurity.org/download.html
+cd "modsecurity"
+
+modsecurity_required_packages='libcurl-devel libxml2-devel httpd-devel'
+yum install -y $modsecurity_required_packages
+./configure --enable-standalone-module
+make
+yum remove -y $modsecurity_required_packages
 
 ##
 ## NGINX
@@ -143,6 +156,7 @@ cd "${NGINX_VERSION}"
 --add-module="${BUILD_DIR}/nginx-module-vts" \
 --add-module="${BUILD_DIR}/ngx_dynamic_upstream" \
 --add-module="${BUILD_DIR}/nginx-rtmp-module"
+--add-module="${BUILD_DIR}/modsecurity/nginx/modsecurity"
 
 make
 make install

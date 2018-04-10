@@ -82,23 +82,43 @@ ln -s /usr/local/ssl/bin/openssl /usr/bin/openssl
 
 openssl version
 
-##
-
-echo -e "\n++ Building ModSecurity \n"
-
-cd "${BUILD_DIR}"
-git clone -b 'nginx_refactoring' https://github.com/SpiderLabs/ModSecurity.git modsecurity # http://www.modsecurity.org/download.html
-cd "modsecurity"
-
-modsecurity_required_packages='libcurl-devel libxml2-devel httpd-devel'
-yum install -y $modsecurity_required_packages
-./autogen.sh
-./configure --enable-standalone-module
-make
-yum remove -y $modsecurity_required_packages
 
 ##
 ## NGINX
+##
+
+
+echo -e "\n++ Building ModSecurity \n"
+# https://www.nginx.com/blog/compiling-and-installing-modsecurity-for-open-source-nginx/
+# https://github.com/SpiderLabs/ModSecurity/tree/v3/master
+cd "${BUILD_DIR}"
+git clone --depth 1 -b v3/master --single-branch https://github.com/SpiderLabs/ModSecurity modsecurity
+cd "modsecurity"
+git submodule init && git submodule update
+./build.sh
+./configure
+make
+make install
+
+##
+
+echo -e "\n++ Downloading NGINX source files\n"
+cd "${BUILD_DIR}"
+wget "http://nginx.org/download/${NGINX_VERSION}.tar.gz"
+tar -zxf "${NGINX_VERSION}.tar.gz"
+
+##
+
+echo -e "\n++ Cloning ModSecurity Connector \n"
+git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git
+
+echo -e "\n++ Building ModSecurity Connector as dynamic module \n"
+cd "${NGINX_VERSION}"
+./configure --with-compat --add-dynamic-module="${BUILD_DIR}/ModSecurity-nginx"
+make modules
+install -d /nginx_http_modsecurity_module
+cp objs/ngx_http_modsecurity_module.so /nginx_http_modsecurity_module/
+
 ##
 
 echo -e "\n++ Cloning nginx-module-vts\n"
@@ -106,6 +126,7 @@ echo -e "\n++ Cloning nginx-module-vts\n"
 cd "${BUILD_DIR}"
 git clone https://github.com/vozlt/nginx-module-vts.git
 
+##
 
 echo -e "\n++ Cloning ngx_dynamic_upstream module\n"
 
@@ -130,7 +151,7 @@ install -d /var/log/nginx/ -o nginx -g nginx
 
 ##
 
-echo -e "\n++ Downloading, unpacking, configuring NGINX source files for the latest stable version\n"
+echo -e "\n++ Building NGINX \n"
 
 cd "${BUILD_DIR}"
 wget "http://nginx.org/download/${NGINX_VERSION}.tar.gz"
@@ -156,11 +177,20 @@ cd "${NGINX_VERSION}"
 --with-stream \
 --add-module="${BUILD_DIR}/nginx-module-vts" \
 --add-module="${BUILD_DIR}/ngx_dynamic_upstream" \
---add-module="${BUILD_DIR}/nginx-rtmp-module" \
---add-module="${BUILD_DIR}/modsecurity/nginx/modsecurity"
+--add-module="${BUILD_DIR}/nginx-rtmp-module"
 
 make
 make install
+
+##
+
+echo -e "\n++ Adding ModSecurity recomended configs to /etc/nginx/ \n"
+
+install -d /etc/nginx/modsec.d
+wget -P /etc/nginx/modsec.d/ https://raw.githubusercontent.com/SpiderLabs/ModSecurity/master/modsecurity.conf-recommended
+mv /etc/nginx/modsec.d/modsecurity.conf-recommended /etc/nginx/modsec.d/modsecurity.conf
+
+sed -i 's/SecRuleEngine DetectionOnly/SecRuleEngine On/' /etc/nginx/modsec.d/modsecurity.conf
 
 ##
 

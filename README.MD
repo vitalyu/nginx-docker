@@ -6,7 +6,7 @@
 ## Latest build with:
 
 ```
-NGINX_VERSION="nginx-1.13.7"
+NGINX_VERSION="nginx-1.13.11"
 PCRE_VERSION="pcre-8.41"
 ZLIB_VERSION="zlib-1.2.11"
 OPENSSL_VERSION="openssl-1.0.2m"

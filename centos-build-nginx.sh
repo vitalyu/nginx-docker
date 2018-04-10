@@ -91,6 +91,7 @@ openssl version
 echo -e "\n++ Building ModSecurity \n"
 # https://www.nginx.com/blog/compiling-and-installing-modsecurity-for-open-source-nginx/
 # https://github.com/SpiderLabs/ModSecurity/tree/v3/master
+# https://github.com/SpiderLabs/ModSecurity-nginx
 cd "${BUILD_DIR}"
 git clone --depth 1 -b v3/master --single-branch https://github.com/SpiderLabs/ModSecurity modsecurity
 cd "modsecurity"
@@ -102,22 +103,10 @@ make install
 
 ##
 
-echo -e "\n++ Downloading NGINX source files\n"
-cd "${BUILD_DIR}"
-wget "http://nginx.org/download/${NGINX_VERSION}.tar.gz"
-tar -zxf "${NGINX_VERSION}.tar.gz"
-
-##
-
 echo -e "\n++ Cloning ModSecurity Connector \n"
-git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git
 
-# echo -e "\n++ Building ModSecurity Connector as dynamic module \n"
-# cd "${NGINX_VERSION}"
-# ./configure --with-compat --add-dynamic-module="${BUILD_DIR}/ModSecurity-nginx"
-# make modules
-# install -d /nginx_http_modsecurity_module
-# cp objs/ngx_http_modsecurity_module.so /nginx_http_modsecurity_module/
+cd "${BUILD_DIR}"
+git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git
 
 ##
 
@@ -188,10 +177,7 @@ make install
 echo -e "\n++ Adding ModSecurity recomended configs to /etc/nginx/ \n"
 
 install -d /etc/nginx/modsec.d
-wget -P /etc/nginx/modsec.d/ https://raw.githubusercontent.com/SpiderLabs/ModSecurity/master/modsecurity.conf-recommended
-mv /etc/nginx/modsec.d/modsecurity.conf-recommended /etc/nginx/modsec.d/modsecurity.conf
-
-sed -i 's/SecRuleEngine DetectionOnly/SecRuleEngine On/' /etc/nginx/modsec.d/modsecurity.conf
+wget -O /etc/nginx/modsec.d/modsecurity.conf https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/modsecurity.conf-recommended
 
 ##
 

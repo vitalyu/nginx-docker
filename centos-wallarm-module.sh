@@ -37,6 +37,10 @@ install -d /var/cache/nginx/wallarm/ -o wallarm -g wallarm
 
 ##
 
+sed -i -e 's/127\.0\.0\.8/127\.0\.0\.1:82/g' /etc/collectd.d/nginx-wallarm.conf
+
+##
+
 yum clean all
 
 ##

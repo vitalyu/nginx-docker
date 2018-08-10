@@ -188,7 +188,7 @@ make install
 echo -e "\n++ Adding ModSecurity recomended configs to /etc/nginx/ \n"
 
 install -d /etc/nginx/modsec.d
-wget -P /etc/nginx/modsec.d/ https://raw.githubusercontent.com/SpiderLabs/ModSecurity/master/modsecurity.conf-recommended
+wget -P /etc/nginx/modsec.d/ https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/modsecurity.conf-recommended
 mv /etc/nginx/modsec.d/modsecurity.conf-recommended /etc/nginx/modsec.d/modsecurity.conf
 
 sed -i 's/SecRuleEngine DetectionOnly/SecRuleEngine On/' /etc/nginx/modsec.d/modsecurity.conf

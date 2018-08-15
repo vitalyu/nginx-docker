@@ -12,6 +12,7 @@
 #           + nginx-module-vts
 #           + ngx_dynamic_upstream
 #           + nginx-rtmp-module
+#           + scaleft
 #
 # Note! This script tested on local machine (CentOS 7.4).
 #       Run only from ROOT
@@ -142,6 +143,13 @@ git clone https://github.com/arut/nginx-rtmp-module.git
 
 ##
 
+echo -e "\n++ Cloning ScaleFT nginx_auth_accessfabric module\n"
+
+cd "${BUILD_DIR}"
+git clone https://github.com/ScaleFT/nginx_auth_accessfabric.git
+
+##
+
 echo -e "\n++ Preparing user, group and folders\n"
 
 adduser --home-dir /var/lib/nginx --shell /sbin/nologin nginx
@@ -178,7 +186,8 @@ cd "${NGINX_VERSION}"
 --add-module="${BUILD_DIR}/nginx-module-vts" \
 --add-module="${BUILD_DIR}/ngx_dynamic_upstream" \
 --add-module="${BUILD_DIR}/nginx-rtmp-module" \
---add-module="${BUILD_DIR}/ModSecurity-nginx"
+--add-module="${BUILD_DIR}/ModSecurity-nginx" \
+--add-module="${BUILD_DIR}/nginx_auth_accessfabric"
 
 make
 make install

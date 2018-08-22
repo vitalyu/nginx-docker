@@ -34,11 +34,11 @@ RUN     cd "${WORKDIR}" \
 ##
 
 # Cloning nginx-module-vts
-RUN        cd "${WORKDIR}" \
+RUN     cd "${WORKDIR}" \
         && git clone https://github.com/vozlt/nginx-module-vts.git 
 
 # Cloning ngx_dynamic_upstream module
-RUN        cd "${WORKDIR}" \
+RUN     cd "${WORKDIR}" \
         && git clone https://github.com/cubicdaiya/ngx_dynamic_upstream.git
 
 # Fetching nginx prebuild

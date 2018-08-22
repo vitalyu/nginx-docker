@@ -1,0 +1,70 @@
+FROM centos:7
+LABEL maintainer="Vitaly Uvarov <v.uvarov@dodopizza.com>"
+
+WORKDIR /nginx_modules
+
+ARG NGINX_VERSION="nginx-1.15.2-1"
+ARG PCRE_VERSION="pcre-8.41"
+ARG ZLIB_VERSION="zlib-1.2.11"
+ARG OPENSSL_VERSION="openssl-1.0.2m" 
+
+RUN 	yum install -y \
+			epel-release wget git \
+			openssl-devel geoip-devel \
+			rpmdevtools gcc gcc-c++ make automake autoconf libtool && \
+		yum clean all -y
+
+# The PCRE library – required by NGINX Core and Rewrite modules and provides support for regular expressions
+RUN 	cd "${WORKDIR}" && \
+		wget "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/${PCRE_VERSION}.tar.gz" && \
+		tar -zxf "${PCRE_VERSION}.tar.gz" && \
+		cd "${PCRE_VERSION}" && \
+		autoreconf -f -i && \
+		./configure && \
+		make && \
+		make install
+
+# The zlib library – required by NGINX Gzip module for headers compression
+RUN 	cd "${WORKDIR}" && \
+		wget "http://zlib.net/${ZLIB_VERSION}.tar.gz" && \
+		tar -zxf "${ZLIB_VERSION}.tar.gz" && \
+		cd "${ZLIB_VERSION}" && \
+		./configure && \
+		make && \
+		make install
+
+# The OpenSSL library – required by NGINX SSL modules to support the HTTPS protocol
+RUN		cd "${WORKDIR}" && \
+		wget "https://www.openssl.org/source/${OPENSSL_VERSION}.tar.gz" && \
+		tar -zxf "${OPENSSL_VERSION}.tar.gz" && \
+		cd "${OPENSSL_VERSION}" && \
+		./config && \
+		make test && \
+		make install
+
+##
+## NGINX
+##
+
+# Cloning nginx-module-vts
+RUN		cd "${WORKDIR}" && \
+		git clone https://github.com/vozlt/nginx-module-vts.git
+
+# Cloning ngx_dynamic_upstream module
+RUN		cd "${WORKDIR}" && \
+		git clone https://github.com/cubicdaiya/ngx_dynamic_upstream.git
+
+# Cloning nginx-rtmp-module module
+RUN		cd "${WORKDIR}" && \
+		git clone https://github.com/arut/nginx-rtmp-module.git
+
+# Fetching nginx prebuild
+RUN 	cd "${WORKDIR}" && \
+		rpm -Uvh "http://nginx.org/packages/mainline/centos/7/SRPMS/${NGINX_VERSION}.el7_4.ngx.src.rpm"
+
+RUN 	echo '--with-http_geoip_module \\' > /args && \
+		echo '--add-module="${WORKDIR}/nginx-module-vts" \\' > /args && \
+		echo '--add-module="${WORKDIR}/ngx_dynamic_upstream" \\' > /args && \
+		echo '--add-module="${WORKDIR}/nginx-rtmp-module" \\' > /args
+
+RUN 	sed -e '/%{BASE_CONFIGURE_ARGS}/r\/args' ~/rpmbuild/SPECS/nginx.spec

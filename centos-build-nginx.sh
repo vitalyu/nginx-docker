@@ -1,23 +1,9 @@
 #!/bin/bash
 
 # ------------------------------------------------------------------
-# [Vitaly Uvarov] CentOS 7 NGINX build script
-#
-#          build NGINX from sources with
-#           + http_v2_module
-#           + http_stub_status_module
-#           + http_ssl_module
-#           + http_geoip_module
-#           + stream module
-#           + nginx-module-vts
-#           + ngx_dynamic_upstream
-#           + nginx-rtmp-module
-#
-# Note! This script tested on local machine (CentOS 7.4).
-#       Run only from ROOT
-#
+# Project: Alpine NGINX build script
+# Maintainer: Vitaly Uvarov [v.uvarov@dodopizza.com]
 # ------------------------------------------------------------------
-
 set -e
 BUILD_DIR=$(cd $(dirname $0) && pwd) # without ending /
 

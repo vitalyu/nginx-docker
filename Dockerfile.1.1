@@ -1,0 +1,101 @@
+FROM alpine
+LABEL maintainer="Vitaly Uvarov <v.uvarov@dodopizza.com>"
+
+WORKDIR /build
+
+RUN 	apk add --no-cache --virtual .build-deps \
+			gcc g++ \
+			make automake autoconf libtool \
+			libc-dev \
+			make \
+			openssl-dev \
+			pcre-dev \
+			zlib-dev \
+			linux-headers \
+			curl \
+			wget \
+			gnupg \
+			libxslt-dev \
+			gd-dev \
+			geoip-dev \
+			git
+
+ARG NGINX_VERSION="nginx-1.15.2"
+ARG PCRE_VERSION="pcre-8.41"
+ARG ZLIB_VERSION="zlib-1.2.11"
+ARG OPENSSL_VERSION="openssl-1.0.2m" 
+
+# # The PCRE library – required by NGINX Core and Rewrite modules and provides support for regular expressions
+# RUN 	cd "${WORKDIR}" && \
+# 		wget "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/${PCRE_VERSION}.tar.gz" && \
+# 		tar -zxf "${PCRE_VERSION}.tar.gz" && \
+# 		cd "${PCRE_VERSION}" && \
+# 		autoreconf -f -i && \
+# 		./configure && \
+# 		make && \
+# 		make install
+
+# # The zlib library – required by NGINX Gzip module for headers compression
+# RUN 	cd "${WORKDIR}" && \
+# 		wget "http://zlib.net/${ZLIB_VERSION}.tar.gz" && \
+# 		tar -zxf "${ZLIB_VERSION}.tar.gz" && \
+# 		cd "${ZLIB_VERSION}" && \
+# 		./configure && \
+# 		make && \
+# 		make install
+
+# # The OpenSSL library – required by NGINX SSL modules to support the HTTPS protocol
+# RUN		cd "${WORKDIR}" && \
+# 		wget "https://www.openssl.org/source/${OPENSSL_VERSION}.tar.gz" && \
+# 		tar -zxf "${OPENSSL_VERSION}.tar.gz" && \
+# 		cd "${OPENSSL_VERSION}" && \
+# 		./config && \
+# 		make test && \
+# 		make install
+
+##
+## NGINX
+##
+
+# Cloning nginx-module-vts
+RUN		cd "${WORKDIR}" && \
+		git clone https://github.com/vozlt/nginx-module-vts.git
+
+# Cloning ngx_dynamic_upstream module
+RUN		cd "${WORKDIR}" && \
+		git clone https://github.com/cubicdaiya/ngx_dynamic_upstream.git
+
+# Cloning nginx-rtmp-module module
+RUN		cd "${WORKDIR}" && \
+		git clone https://github.com/arut/nginx-rtmp-module.git
+
+# Preparing user, group and folders\n"
+RUN 	adduser -D -h /var/lib/nginx -s /sbin/nologin nginx && \
+		install -d /etc/nginx/ 	-o nginx -g nginx && \
+		install -d /var/log/nginx/ -o nginx -g nginx
+
+# Building NGINX
+RUN		cd "${WORKDIR}" && \
+		wget "http://nginx.org/download/${NGINX_VERSION}.tar.gz" && \
+		tar -zxf "${NGINX_VERSION}.tar.gz" && \
+		cd "${NGINX_VERSION}" && \
+		./configure \
+			--user=nginx \
+			--group=nginx \
+			--prefix=/etc/nginx \
+			--sbin-path=/usr/sbin/nginx \
+			--conf-path=/etc/nginx/nginx.conf \
+			--pid-path=/var/run/nginx.pid \
+			--lock-path=/var/run/nginx.lock \
+			--http-log-path=/var/log/nginx/access.log \
+			--error-log-path=/var/log/nginx/error.log \
+			--with-http_v2_module \
+			--with-http_ssl_module \
+			--with-http_geoip_module \
+			--with-http_stub_status_module \
+			--with-stream \
+			--add-module="/build/nginx-module-vts" \
+			--add-module="/build/ngx_dynamic_upstream" \
+			--add-module="/build/nginx-rtmp-module" && \
+		make && \
+		make install

@@ -61,6 +61,7 @@ apk add --no-cache --virtual .build-deps \
 #apk add --no-cache openssl-dev # since alpine > 3.4 openssl conflicts with libressl ()
 
 apk add --no-cache \
+	libcurl \
     openssl \
 	pcre \
 	zlib \
@@ -176,6 +177,13 @@ cd "${NGINX_VERSION}"
 
 make
 make install
+
+
+sed -i '1s|^| \
+            load_module modules/ngx_http_vhost_traffic_status_module.so; \n \
+            load_module modules/ngx_dynamic_upstream_module.so; \n \
+            load_module modules/ngx_http_auth_accessfabric_module.so; \n \
+        |' /etc/nginx/nginx.conf
 
 ##
 

@@ -1,4 +1,4 @@
-FROM centos:7
+FROM centos:7 AS builder
 LABEL maintainer="Vitaly Uvarov <v.uvarov@dodopizza.com>"
 
 WORKDIR /nginx_modules
@@ -16,7 +16,7 @@ RUN     yum install -y \
 
 ## The OpenSSL library – required by NGINX SSL modules to support the HTTPS protocol
 RUN     cd "${WORKDIR}" \
-        && wget "https://www.openssl.org/source/${OPENSSL_VERSION}.tar.gz" \
+        && wget -q "https://www.openssl.org/source/${OPENSSL_VERSION}.tar.gz" \
         && tar -zxf "${OPENSSL_VERSION}.tar.gz" \
         && cd "${OPENSSL_VERSION}" \
         && ./config \
@@ -28,6 +28,42 @@ RUN     cd "${WORKDIR}" \
         && ( mv /usr/bin/openssl{,.old} || true ) \
         && ln -s /usr/local/ssl/bin/openssl /usr/bin/openssl \
         && openssl version
+
+
+##
+## ScaleFT
+##
+
+# RUN     yum install -y jansson-devel
+
+# # Building jansson
+# RUN     cd "${WORKDIR}" \
+#         && git clone https://github.com/akheron/jansson.git \
+#         && cd "jansson" \
+#         && autoreconf -vi \
+#         && ./configure \
+#         && make \
+#         && make check \
+#         && make install
+
+# Building ScaleFT/libxjwt
+# RUN     cd "${WORKDIR}" \
+#         && wget -q https://github.com/ScaleFT/libxjwt/releases/download/v1.0.3/libxjwt-1.0.3.tar.gz \
+#         && tar -xz -f ./libxjwt-1.0.3.tar.gz \
+#         && mv "libxjwt-1.0.3" "libxjwt" \
+#         && cd "libxjwt" \
+#         && ./configure \
+#         && make \
+#         && make install
+
+RUN     git clone https://github.com/ScaleFT/libxjwt.git \
+        && cd libxjwt \ 
+        && ./buildconf.sh && ./configure \
+        && make && make install
+
+# Cloning nginx_auth_accessfabric
+RUN     cd "${WORKDIR}" \
+        && git clone https://github.com/ScaleFT/nginx_auth_accessfabric.git
 
 ##
 ## NGINX
@@ -43,12 +79,33 @@ RUN     cd "${WORKDIR}" \
 
 # Fetching nginx prebuild
 RUN     cd "${WORKDIR}" \
+        && useradd rpmbuild \
         && rpm -Uvh "http://nginx.org/packages/mainline/centos/7/SRPMS/${NGINX_VERSION}.el7_4.ngx.src.rpm"
 
-RUN     echo "--with-debug --with-http_geoip_module " > /args \
-        && echo "--add-module='${WORKDIR}/nginx-module-vts' " >> /args \
-        && echo "--add-module='${WORKDIR}/ngx_dynamic_upstream' " >> /args
+RUN     cd "${WORKDIR}" && export WORKDIR=$(pwd) \
+        && echo -e "\
+            --with-debug \
+            --with-http_geoip_module \
+            --add-module='${WORKDIR}/nginx-module-vts' \
+            --add-module='${WORKDIR}/ngx_dynamic_upstream' \
+            --add-module='${WORKDIR}/nginx_auth_accessfabric' \
+        " > /configure_args
 
-RUN     awk '/--with-debug/{system("cat /args");next}1' ~/rpmbuild/SPECS/nginx.spec
+RUN     nginx_spec='/root/rpmbuild/SPECS/nginx.spec' \ 
+        && awk '/--with-debug/{system("cat /configure_args");next}1' ${nginx_spec} > ${nginx_spec}_ \
+        && mv ${nginx_spec}{_,}
 
-RUN     rpmbuild -bb ~/rpmbuild/SPECS/nginx.spec
+RUN     yum install -y libcurl-devel \
+        && rpmbuild -bb ~/rpmbuild/SPECS/nginx.spec
+
+# RUN     rm -f /root/rpmbuild/RPMS/x86_64/*-debuginfo-*
+
+#####################################################
+
+# FROM centos:7 AS runner
+
+# COPY    --from=builder "/root/rpmbuild/RPMS/x86_64/" "/tmp/"
+
+# RUN     yum install -y openssl
+
+# RUN     rpm -i /tmp/nginx-*.rpm

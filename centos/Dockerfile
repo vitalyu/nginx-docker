@@ -2,7 +2,7 @@ FROM centos:7
 LABEL maintainer="Vitaly Uvarov <v.uvarov@dodopizza.com>"
 
 WORKDIR /nginx-build
-COPY ./centos-build-nginx.sh /nginx-build/build.sh
+COPY ./build-nginx.sh /nginx-build/build.sh
 RUN /bin/sh /nginx-build/build.sh
 #&& rm -rf /nginx-build/
 

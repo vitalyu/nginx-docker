@@ -171,19 +171,22 @@ cd "${NGINX_VERSION}"
 		--with-compat \
 		--with-file-aio \
 		--with-http_v2_module \
---add-module="${BUILD_DIR}/nginx-module-vts" \
---add-module="${BUILD_DIR}/ngx_dynamic_upstream" \
+--add-dynamic-module="${BUILD_DIR}/nginx-module-vts" \
+--add-dynamic-module="${BUILD_DIR}/ngx_dynamic_upstream" \
 --add-dynamic-module="${BUILD_DIR}/nginx_auth_accessfabric"
 
 make
 make install
 
+ln -s /usr/lib/nginx/modules/ /etc/nginx/modules
 
 sed -i '1s|^| \
-            load_module modules/ngx_http_vhost_traffic_status_module.so; \n \
-            load_module modules/ngx_dynamic_upstream_module.so; \n \
-            load_module modules/ngx_http_auth_accessfabric_module.so; \n \
-        |' /etc/nginx/nginx.conf
+# Dynamic modules \
+load_module modules/ngx_http_vhost_traffic_status_module.so; \
+load_module modules/ngx_dynamic_upstream_module.so; \
+load_module modules/ngx_http_auth_accessfabric_module.so; \
+# - Dynamic modules \
+|' /etc/nginx/nginx.conf
 
 ##
 

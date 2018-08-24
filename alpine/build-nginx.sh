@@ -10,9 +10,6 @@ BUILD_DIR=$(cd $(dirname $0) && pwd) # without ending /
 ##
 
 NGINX_VERSION="nginx-1.15.2"
-# PCRE_VERSION="pcre-8.41"
-# ZLIB_VERSION="zlib-1.2.11"
-# OPENSSL_VERSION="openssl-1.0.2m"
 
 ##
 
@@ -36,28 +33,6 @@ apk add --no-cache --virtual .build-deps \
 	curl \
 	git
 
-# apk add --no-cache --virtual .build-deps \
-# 	libcurl \
-# 	curl-dev \
-#     gcc \
-# 	g++ \
-# 	make \
-# 	automake \
-# 	autoconf \
-# 	libtool \
-# 	libc-dev \
-# 	linux-headers \
-# 	gnupg \
-# 	gd-dev \
-# 	libressl-dev \
-# 	libxslt-dev \
-#     curl \
-# 	wget \
-# 	git \
-# 	pcre-dev \
-# 	zlib-dev \
-# 	geoip-dev
-
 #apk add --no-cache openssl-dev # since alpine > 3.4 openssl conflicts with libressl ()
 
 apk add --no-cache \
@@ -65,8 +40,7 @@ apk add --no-cache \
     openssl \
 	pcre \
 	zlib \
-	geoip \
-	jansson-dev
+	geoip
 
 ##
 
@@ -89,9 +63,6 @@ echo -e "\n++ Cloning nginx_auth_accessfabric\n"
 
 cd "${BUILD_DIR}"
 git clone https://github.com/ScaleFT/nginx_auth_accessfabric.git
-# wget -q -O nginx_auth_accessfabric.tar.gz https://github.com/ScaleFT/nginx_auth_accessfabric/archive/v1.0.0.tar.gz
-# tar -xz -f ./nginx_auth_accessfabric.tar.gz
-# mv "nginx_auth_accessfabric-1.0.0" "nginx_auth_accessfabric"
 
 ##
 ## NGINX
@@ -114,9 +85,10 @@ git clone https://github.com/cubicdaiya/ngx_dynamic_upstream.git
 echo -e "\n++ Preparing user, group and folders\n"
 
 adduser -D -h /var/lib/nginx -s /sbin/nologin nginx
-install -d /etc/nginx/ -o nginx -g nginx
-install -d /var/log/nginx/ -o nginx -g nginx
-install -d /var/cache/nginx -o nginx -g nginx
+for dir in '/etc/nginx/' '/var/log/nginx/' '/var/cache/nginx'
+do
+	install -d ${dir} -o nginx -g nginx
+done
 
 ##
 
@@ -127,6 +99,7 @@ wget -q "http://nginx.org/download/${NGINX_VERSION}.tar.gz"
 tar -zxf "${NGINX_VERSION}.tar.gz"
 cd "${NGINX_VERSION}"
 
+# Base modules from https://github.com/nginxinc/docker-nginx/blob/master/stable/alpine/Dockerfile
 ./configure \
 		--prefix=/etc/nginx \
 		--sbin-path=/usr/sbin/nginx \

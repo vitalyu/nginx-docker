@@ -28,7 +28,6 @@ apk add --no-cache --virtual .build-deps \
 	geoip-dev \
 	libxslt-dev \
     curl-dev \
-    jansson-dev \
 	wget \
 	curl \
 	git
@@ -40,7 +39,8 @@ apk add --no-cache \
     openssl \
 	pcre \
 	zlib \
-	geoip
+	geoip \
+	jansson-dev
 
 ##
 

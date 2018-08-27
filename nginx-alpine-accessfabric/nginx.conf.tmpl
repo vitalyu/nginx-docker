@@ -1,0 +1,29 @@
+# Dynamic modules 
+load_module modules/ngx_http_auth_accessfabric_module.so; 
+# - Dynamic modules 
+
+worker_processes  1;
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+    sendfile        on;
+    keepalive_timeout  65;
+    
+    {{range . }}
+    server {
+        server_name {{.Server}}
+        listen 80;
+        auth_accessfabric on;
+        auth_accessfabric_audience "{{.Auth_accessfabric_audience}}";
+        location / {
+            proxy_pass {{.Proxy_pass}};
+        }
+    }
+    # - {{.Server}}
+    {{end }}
+}
+# - http
